@@ -1,0 +1,241 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name"
+		},
+		"itsscdatacapture_blob_storage": {
+			"type": "string"
+		},
+		"dmstest_data_lake_store": {
+			"type": "string"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/itssc_data_capture_pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Copy files from /ctms-staging Blob Storage to /ctms/[yyyymmdd], and then to /Staging on Data Lake Store.",
+				"activities": [
+					{
+						"name": "CopyFromCTMSStagingToCTMS",
+						"description": "Copy from Blob Storage \"/ctms-staging\" to Blob Storage \"/ctms/[yyyymmdd]\".",
+						"type": "Copy",
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"typeProperties": {
+							"source": {
+								"type": "BlobSource",
+								"recursive": true
+							},
+							"sink": {
+								"type": "BlobSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "itsscdatacapture_blob_storage",
+								"type": "DatasetReference",
+								"parameters": {
+									"folderPath": {
+										"value": "@pipeline().parameters.srcBlobStorageFolderPath",
+										"type": "Expression"
+									},
+									"fileName": {
+										"value": "@pipeline().parameters.srcBlobStorageFileName",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "itsscdatacapture_blob_storage",
+								"type": "DatasetReference",
+								"parameters": {
+									"folderPath": {
+										"value": "@pipeline().parameters.dstBlobStorageFolderPath",
+										"type": "Expression"
+									},
+									"fileName": {
+										"value": "@pipeline().parameters.dstBlobStorageFileName",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "CopyFromCTMSToDataLake",
+						"description": "Copy from Blob Storage \"/ctms-staging\" to Blob Storage \"/ctms/[yyyymmdd]\", then to Data Lake Store \"/Staging\" directory.",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "CopyFromCTMSStagingToCTMS",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"typeProperties": {
+							"source": {
+								"type": "BlobSource",
+								"recursive": true
+							},
+							"sink": {
+								"type": "AzureDataLakeStoreSink"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "itsscdatacapture_blob_storage",
+								"type": "DatasetReference",
+								"parameters": {
+									"folderPath": {
+										"value": "@pipeline().parameters.dstBlobStorageFolderPath",
+										"type": "Expression"
+									},
+									"fileName": {
+										"value": "@pipeline().parameters.dstBlobStorageFileName",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "dmstest_data_lake_store",
+								"type": "DatasetReference",
+								"parameters": {
+									"folderPath": {
+										"value": "@pipeline().parameters.dstDataLakeFolderPath",
+										"type": "Expression"
+									},
+									"fileName": {
+										"value": "@pipeline().parameters.dstDataLakeFileName",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"srcBlobStorageFolderPath": {
+						"type": "String",
+						"defaultValue": "\"\""
+					},
+					"srcBlobStorageFileName": {
+						"type": "String",
+						"defaultValue": "\"\""
+					},
+					"dstBlobStorageFolderPath": {
+						"type": "String",
+						"defaultValue": "\"\""
+					},
+					"dstBlobStorageFileName": {
+						"type": "String",
+						"defaultValue": "\"\""
+					},
+					"dstDataLakeFolderPath": {
+						"type": "String",
+						"defaultValue": "\"\""
+					},
+					"dstDataLakeFileName": {
+						"type": "String",
+						"defaultValue": "\"\""
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/itsscdatacapture_blob_storage')]",
+				"[concat(variables('factoryId'), '/datasets/dmstest_data_lake_store')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/itsscdatacapture_blob_storage')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('itsscdatacapture_blob_storage')]",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"folderPath": {
+						"type": "String",
+						"defaultValue": "\"\""
+					},
+					"fileName": {
+						"type": "String",
+						"defaultValue": "\"\""
+					}
+				},
+				"type": "AzureBlob",
+				"typeProperties": {
+					"fileName": {
+						"value": "@dataset().fileName",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "@dataset().folderPath",
+						"type": "Expression"
+					}
+				}
+			}
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dmstest_data_lake_store')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('dmstest_data_lake_store')]",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"folderPath": {
+						"type": "String",
+						"defaultValue": "\"\""
+					},
+					"fileName": {
+						"type": "String",
+						"defaultValue": "\"\""
+					}
+				},
+				"type": "AzureDataLakeStoreFile",
+				"typeProperties": {
+					"fileName": {
+						"value": "@dataset().fileName",
+						"type": "Expression"
+					},
+					"folderPath": {
+						"value": "@dataset().folderPath",
+						"type": "Expression"
+					}
+				}
+			}
+		}
+	]
+}
