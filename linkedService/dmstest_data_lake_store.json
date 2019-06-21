@@ -1,0 +1,13 @@
+{
+	"name": "dmstest_data_lake_store",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "AzureDataLakeStore",
+		"typeProperties": {
+			"dataLakeStoreUri": "https://dmstest.azuredatalakestore.net/webhdfs/v1",
+			"tenant": "be7fd329-e368-4fca-93b3-43e8447b9782",
+			"subscriptionId": "2a845b8f-1f09-4b6a-b596-c02f77267583",
+			"resourceGroupName": "Data_Lake_Store"
+		}
+	}
+}

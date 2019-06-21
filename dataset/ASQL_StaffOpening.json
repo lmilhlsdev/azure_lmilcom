@@ -1,0 +1,224 @@
+{
+	"name": "ASQL_StaffOpening",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlMetricTest",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureSqlTable",
+		"structure": [
+			{
+				"name": "WorkOrderRecordNumber",
+				"type": "Int32"
+			},
+			{
+				"name": "WorkOrderNumber",
+				"type": "String"
+			},
+			{
+				"name": "SearchStatus",
+				"type": "String"
+			},
+			{
+				"name": "HiringManager",
+				"type": "String"
+			},
+			{
+				"name": "HighPriorityRequest",
+				"type": "String"
+			},
+			{
+				"name": "OpeningDate",
+				"type": "DateTime"
+			},
+			{
+				"name": "OpeningName",
+				"type": "String"
+			},
+			{
+				"name": "OpeningType",
+				"type": "String"
+			},
+			{
+				"name": "OpeningLaborCategory",
+				"type": "String"
+			},
+			{
+				"name": "OpeningStatus",
+				"type": "String"
+			},
+			{
+				"name": "OpeningOnHold",
+				"type": "String"
+			},
+			{
+				"name": "PlannedStartDate",
+				"type": "DateTime"
+			},
+			{
+				"name": "PlannedEndDate",
+				"type": "DateTime"
+			},
+			{
+				"name": "PlannedHours",
+				"type": "Decimal"
+			},
+			{
+				"name": "PositionTitle",
+				"type": "String"
+			},
+			{
+				"name": "ResumeCount",
+				"type": "Int16"
+			},
+			{
+				"name": "PhoneScreenCount",
+				"type": "Int16"
+			},
+			{
+				"name": "InterviewCount",
+				"type": "Int16"
+			},
+			{
+				"name": "PreviousCandidate",
+				"type": "String"
+			},
+			{
+				"name": "PreviousCandidateEmployer",
+				"type": "String"
+			},
+			{
+				"name": "CandidateFirstname",
+				"type": "String"
+			},
+			{
+				"name": "CandidateMiddleName",
+				"type": "String"
+			},
+			{
+				"name": "CandidateLastName",
+				"type": "String"
+			},
+			{
+				"name": "CandidateSelected",
+				"type": "String"
+			},
+			{
+				"name": "CandidateEmployer",
+				"type": "String"
+			},
+			{
+				"name": "CandidateSelectedSent",
+				"type": "String"
+			},
+			{
+				"name": "CandidateSource",
+				"type": "String"
+			},
+			{
+				"name": "CandidateStarted",
+				"type": "String"
+			},
+			{
+				"name": "CandidateWithdrawal",
+				"type": "String"
+			},
+			{
+				"name": "CandidateWithdrawalSent",
+				"type": "String"
+			},
+			{
+				"name": "InternalSource",
+				"type": "String"
+			},
+			{
+				"name": "LeidosJobCode",
+				"type": "String"
+			},
+			{
+				"name": "LeidosOpening",
+				"type": "String"
+			},
+			{
+				"name": "LeidosPositionSubmitted",
+				"type": "String"
+			},
+			{
+				"name": "LeidosRecordStatus",
+				"type": "String"
+			},
+			{
+				"name": "LeidosRehire",
+				"type": "String"
+			},
+			{
+				"name": "LeidosRequestNumber",
+				"type": "String"
+			},
+			{
+				"name": "LaborRateCreated",
+				"type": "String"
+			},
+			{
+				"name": "LaborRateStatus",
+				"type": "String"
+			},
+			{
+				"name": "LaborRateSubmitDate",
+				"type": "DateTime"
+			},
+			{
+				"name": "LaborRateApprovalDate",
+				"type": "DateTime"
+			},
+			{
+				"name": "ActualStartDate",
+				"type": "DateTime"
+			},
+			{
+				"name": "ActualStartSent",
+				"type": "String"
+			},
+			{
+				"name": "AuthorizedStart",
+				"type": "String"
+			},
+			{
+				"name": "AuthorizedStartSent",
+				"type": "String"
+			},
+			{
+				"name": "OpeningCancelDate",
+				"type": "DateTime"
+			},
+			{
+				"name": "OpeningCancelSent",
+				"type": "String"
+			},
+			{
+				"name": "SOID",
+				"type": "Int32"
+			},
+			{
+				"name": "LastUpdateDate",
+				"type": "DateTime"
+			},
+			{
+				"name": "LastUpdateBy",
+				"type": "String"
+			},
+			{
+				"name": "CreateDate",
+				"type": "DateTime"
+			},
+			{
+				"name": "CreateBy",
+				"type": "String"
+			}
+		],
+		"typeProperties": {
+			"tableName": "[dbo].[StaffOpening]"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

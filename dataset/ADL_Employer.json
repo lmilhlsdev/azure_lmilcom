@@ -1,0 +1,66 @@
+{
+	"name": "ADL_Employer",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dmstest_data_lake_store",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureDataLakeStoreFile",
+		"structure": [
+			{
+				"name": "EMPLOYER_ID",
+				"type": "String"
+			},
+			{
+				"name": "EMPLOYER",
+				"type": "String"
+			},
+			{
+				"name": "STREET_PO_BOX",
+				"type": "String"
+			},
+			{
+				"name": "STREET_OTHER",
+				"type": "String"
+			},
+			{
+				"name": "CITY",
+				"type": "String"
+			},
+			{
+				"name": "STATE",
+				"type": "String"
+			},
+			{
+				"name": "ZIP",
+				"type": "String"
+			},
+			{
+				"name": "PHONE",
+				"type": "String"
+			},
+			{
+				"name": "FAX",
+				"type": "String"
+			},
+			{
+				"name": "MEMO",
+				"type": "String"
+			}
+		],
+		"typeProperties": {
+			"format": {
+				"type": "TextFormat",
+				"columnDelimiter": "|",
+				"rowDelimiter": "",
+				"nullValue": "\\N",
+				"treatEmptyAsNull": true,
+				"skipLineCount": 0,
+				"firstRowAsHeader": true
+			},
+			"fileName": "Employer_New.txt",
+			"folderPath": "Metrics/Staging"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

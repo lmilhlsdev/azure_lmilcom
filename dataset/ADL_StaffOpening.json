@@ -1,0 +1,246 @@
+{
+	"name": "ADL_StaffOpening",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dmstest_data_lake_store",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureDataLakeStoreFile",
+		"structure": [
+			{
+				"name": "ID",
+				"type": "String"
+			},
+			{
+				"name": "OpeningStatus",
+				"type": "String"
+			},
+			{
+				"name": "SearchStatus",
+				"type": "String"
+			},
+			{
+				"name": "ResourceType",
+				"type": "String"
+			},
+			{
+				"name": "Task_Id",
+				"type": "String"
+			},
+			{
+				"name": "WO_Id",
+				"type": "String"
+			},
+			{
+				"name": "HiringManager",
+				"type": "String"
+			},
+			{
+				"name": "LCAT",
+				"type": "String"
+			},
+			{
+				"name": "CandidateName",
+				"type": "String"
+			},
+			{
+				"name": "Modified",
+				"type": "String"
+			},
+			{
+				"name": "ModifiedBy",
+				"type": "String"
+			},
+			{
+				"name": "Created",
+				"type": "String"
+			},
+			{
+				"name": "CreatedBy",
+				"type": "String"
+			},
+			{
+				"name": "ActualStartDate",
+				"type": "String"
+			},
+			{
+				"name": "ActualStartSent",
+				"type": "String"
+			},
+			{
+				"name": "AuthorizedStart",
+				"type": "String"
+			},
+			{
+				"name": "AuthorizedStartSent",
+				"type": "String"
+			},
+			{
+				"name": "CancelDate",
+				"type": "String"
+			},
+			{
+				"name": "CancelSent",
+				"type": "String"
+			},
+			{
+				"name": "FName",
+				"type": "String"
+			},
+			{
+				"name": "LName",
+				"type": "String"
+			},
+			{
+				"name": "MName",
+				"type": "String"
+			},
+			{
+				"name": "CandidateSelected",
+				"type": "String"
+			},
+			{
+				"name": "CandidateSelectedSent",
+				"type": "String"
+			},
+			{
+				"name": "CandidateSource",
+				"type": "String"
+			},
+			{
+				"name": "CandidateStarted",
+				"type": "String"
+			},
+			{
+				"name": "CandidateWithdrawal",
+				"type": "String"
+			},
+			{
+				"name": "CandidateWithdrawalSent",
+				"type": "String"
+			},
+			{
+				"name": "InternalSourcing",
+				"type": "String"
+			},
+			{
+				"name": "Interviews",
+				"type": "String"
+			},
+			{
+				"name": "PhoneScreens",
+				"type": "String"
+			},
+			{
+				"name": "LMJobCode",
+				"type": "String"
+			},
+			{
+				"name": "LMOpening",
+				"type": "String"
+			},
+			{
+				"name": "LMPositionSubmit",
+				"type": "String"
+			},
+			{
+				"name": "LMRecord",
+				"type": "String"
+			},
+			{
+				"name": "LMRehire",
+				"type": "String"
+			},
+			{
+				"name": "LMReq",
+				"type": "String"
+			},
+			{
+				"name": "LRATE",
+				"type": "String"
+			},
+			{
+				"name": "LRATEApprovedDate",
+				"type": "String"
+			},
+			{
+				"name": "LRATECreated",
+				"type": "String"
+			},
+			{
+				"name": "LRATESubmitDate",
+				"type": "String"
+			},
+			{
+				"name": "OnholdOpeningStatus",
+				"type": "String"
+			},
+			{
+				"name": "OpeningDate",
+				"type": "String"
+			},
+			{
+				"name": "OpeningName",
+				"type": "String"
+			},
+			{
+				"name": "OpeningType",
+				"type": "String"
+			},
+			{
+				"name": "PlannedEnd",
+				"type": "String"
+			},
+			{
+				"name": "PlannedHours",
+				"type": "String"
+			},
+			{
+				"name": "PlannedStart",
+				"type": "String"
+			},
+			{
+				"name": "PositionTitle",
+				"type": "String"
+			},
+			{
+				"name": "ProbableStartDate",
+				"type": "String"
+			},
+			{
+				"name": "HighPriorityReq",
+				"type": "String"
+			},
+			{
+				"name": "ResumesReceived",
+				"type": "String"
+			},
+			{
+				"name": "CandidateEmployer",
+				"type": "String"
+			},
+			{
+				"name": "PrevCandidateName",
+				"type": "String"
+			},
+			{
+				"name": "PrevCandidateEmployer",
+				"type": "String"
+			}
+		],
+		"typeProperties": {
+			"format": {
+				"type": "TextFormat",
+				"columnDelimiter": "|",
+				"rowDelimiter": "",
+				"nullValue": "\\N",
+				"treatEmptyAsNull": true,
+				"skipLineCount": 0,
+				"firstRowAsHeader": true
+			},
+			"fileName": "StaffOpenings_New.csv",
+			"folderPath": "Metrics/Staging"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

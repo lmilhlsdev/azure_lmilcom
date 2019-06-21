@@ -1,0 +1,30 @@
+{
+	"name": "itsscdatacapture_ctms_blob_staged",
+	"properties": {
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "itssc_data_capture_pipeline",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"srcBlobStorageFolderPath": "@triggerBody().folderPath",
+					"srcBlobStorageFileName": "@triggerBody().fileName",
+					"dstBlobStorageFolderPath": "@concat('/ctms/', formatDateTime(trigger().endTime, 'yyyMMdd'))",
+					"dstBlobStorageFileName": "@triggerBody().fileName",
+					"dstDataLakeFolderPath": "/Metrics/Staging",
+					"dstDataLakeFileName": "@triggerBody().fileName"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/ctms-staging/",
+			"scope": "/subscriptions/2a845b8f-1f09-4b6a-b596-c02f77267583/resourceGroups/itssc_data_capture/providers/Microsoft.Storage/storageAccounts/itsscdatacapture",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

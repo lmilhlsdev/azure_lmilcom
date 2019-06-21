@@ -1,0 +1,56 @@
+{
+	"name": "ASQL_Vendor",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlMetricTest",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureSqlTable",
+		"structure": [
+			{
+				"name": "VendorName",
+				"type": "String"
+			},
+			{
+				"name": "Address1",
+				"type": "String"
+			},
+			{
+				"name": "Address2",
+				"type": "String"
+			},
+			{
+				"name": "City",
+				"type": "String"
+			},
+			{
+				"name": "StateAbbrev",
+				"type": "String"
+			},
+			{
+				"name": "ZipCode",
+				"type": "String"
+			},
+			{
+				"name": "PhoneNumber",
+				"type": "String"
+			},
+			{
+				"name": "FaxNumber",
+				"type": "String"
+			},
+			{
+				"name": "Note",
+				"type": "String"
+			},
+			{
+				"name": "EmployerID",
+				"type": "Int32"
+			}
+		],
+		"typeProperties": {
+			"tableName": "[dbo].[Vendor]"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,31 @@
+{
+	"name": "dmstest_data_lake_store",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dmstest_data_lake_store",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"folderPath": {
+				"type": "String",
+				"defaultValue": "\"\""
+			},
+			"fileName": {
+				"type": "String",
+				"defaultValue": "\"\""
+			}
+		},
+		"type": "AzureDataLakeStoreFile",
+		"typeProperties": {
+			"fileName": {
+				"value": "@dataset().fileName",
+				"type": "Expression"
+			},
+			"folderPath": {
+				"value": "@dataset().folderPath",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

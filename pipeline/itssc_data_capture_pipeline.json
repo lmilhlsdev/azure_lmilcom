@@ -1,0 +1,151 @@
+{
+	"name": "itssc_data_capture_pipeline",
+	"properties": {
+		"description": "Copy files from /ctms-staging Blob Storage to /ctms/[yyyymmdd], and then to /Staging on Data Lake Store.",
+		"activities": [
+			{
+				"name": "CopyFromCTMSStagingToCTMS",
+				"description": "Copy from Blob Storage \"/ctms-staging\" to Blob Storage \"/ctms/[yyyymmdd]\".",
+				"type": "Copy",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "BlobSource",
+						"recursive": true
+					},
+					"sink": {
+						"type": "BlobSink"
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "itsscdatacapture_blob_storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"folderPath": {
+								"value": "@pipeline().parameters.srcBlobStorageFolderPath",
+								"type": "Expression"
+							},
+							"fileName": {
+								"value": "@pipeline().parameters.srcBlobStorageFileName",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "itsscdatacapture_blob_storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"folderPath": {
+								"value": "@pipeline().parameters.dstBlobStorageFolderPath",
+								"type": "Expression"
+							},
+							"fileName": {
+								"value": "@pipeline().parameters.dstBlobStorageFileName",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "CopyFromCTMSToDataLake",
+				"description": "Copy from Blob Storage \"/ctms-staging\" to Blob Storage \"/ctms/[yyyymmdd]\", then to Data Lake Store \"/Staging\" directory.",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "CopyFromCTMSStagingToCTMS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "BlobSource",
+						"recursive": true
+					},
+					"sink": {
+						"type": "AzureDataLakeStoreSink"
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "itsscdatacapture_blob_storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"folderPath": {
+								"value": "@pipeline().parameters.dstBlobStorageFolderPath",
+								"type": "Expression"
+							},
+							"fileName": {
+								"value": "@pipeline().parameters.dstBlobStorageFileName",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "dmstest_data_lake_store",
+						"type": "DatasetReference",
+						"parameters": {
+							"folderPath": {
+								"value": "@pipeline().parameters.dstDataLakeFolderPath",
+								"type": "Expression"
+							},
+							"fileName": {
+								"value": "@pipeline().parameters.dstDataLakeFileName",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"srcBlobStorageFolderPath": {
+				"type": "String",
+				"defaultValue": "\"\""
+			},
+			"srcBlobStorageFileName": {
+				"type": "String",
+				"defaultValue": "\"\""
+			},
+			"dstBlobStorageFolderPath": {
+				"type": "String",
+				"defaultValue": "\"\""
+			},
+			"dstBlobStorageFileName": {
+				"type": "String",
+				"defaultValue": "\"\""
+			},
+			"dstDataLakeFolderPath": {
+				"type": "String",
+				"defaultValue": "\"\""
+			},
+			"dstDataLakeFileName": {
+				"type": "String",
+				"defaultValue": "\"\""
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

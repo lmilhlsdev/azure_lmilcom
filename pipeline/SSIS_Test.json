@@ -1,0 +1,31 @@
+{
+	"name": "SSIS_Test",
+	"properties": {
+		"description": "Execute SSIS Package",
+		"activities": [
+			{
+				"name": "CTMS_Load",
+				"type": "ExecuteSSISPackage",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"packageLocation": {
+						"packagePath": "ITSSC/CTMS_Load/Package.dtsx"
+					},
+					"environmentPath": null,
+					"connectVia": {
+						"referenceName": "SSISIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"loggingLevel": "Basic"
+				}
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
