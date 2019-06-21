@@ -1,0 +1,808 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name"
+		},
+		"dmstest_data_lake_store": {
+			"type": "string"
+		},
+		"AzureSqlMetricTest": {
+			"type": "string"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/load_metric_warehouse')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Load_ITSSCVendor",
+						"type": "Copy",
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"typeProperties": {
+							"source": {
+								"type": "AzureDataLakeStoreSource",
+								"recursive": false
+							},
+							"sink": {
+								"type": "SqlSink",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": true,
+							"redirectIncompatibleRowSettings": {
+								"linkedServiceName": {
+									"referenceName": "[parameters('dmstest_data_lake_store')]",
+									"type": "LinkedServiceReference"
+								},
+								"path": "Metrics/Staging/ErrorLog"
+							},
+							"dataIntegrationUnits": 0,
+							"translator": {
+								"type": "TabularTranslator",
+								"columnMappings": {
+									"EMPLOYER": "VendorName",
+									"STREET_OTHER": "Address1",
+									"STREET_PO_BOX": "Address2",
+									"CITY": "City",
+									"STATE": "StateAbbrev",
+									"ZIP": "ZipCode",
+									"PHONE": "PhoneNumber",
+									"FAX": "FaxNumber",
+									"MEMO": "Note",
+									"EMPLOYER_ID": "EmployerID"
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADL_Employer",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ASQL_Vendor",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "Load_StaffOpening",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Load_ITSSCVendor",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"typeProperties": {
+							"source": {
+								"type": "AzureDataLakeStoreSource",
+								"recursive": false
+							},
+							"sink": {
+								"type": "SqlSink",
+								"writeBatchSize": 10000
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": true,
+							"redirectIncompatibleRowSettings": {
+								"linkedServiceName": {
+									"referenceName": "[parameters('dmstest_data_lake_store')]",
+									"type": "LinkedServiceReference"
+								},
+								"path": "Metrics/DFErrorLog"
+							},
+							"dataIntegrationUnits": 0,
+							"translator": {
+								"type": "TabularTranslator",
+								"columnMappings": {
+									"WO_Id": "WorkOrderRecordNumber",
+									"Task_Id": "WorkOrderNumber",
+									"SearchStatus": "SearchStatus",
+									"HiringManager": "HiringManager",
+									"HighPriorityReq": "HighPriorityRequest",
+									"OpeningDate": "OpeningDate",
+									"OpeningName": "OpeningName",
+									"OpeningType": "OpeningType",
+									"LCAT": "OpeningLaborCategory",
+									"OpeningStatus": "OpeningStatus",
+									"OnholdOpeningStatus": "OpeningOnHold",
+									"PlannedStart": "PlannedStartDate",
+									"PlannedEnd": "PlannedEndDate",
+									"PlannedHours": "PlannedHours",
+									"PositionTitle": "PositionTitle",
+									"ResumesReceived": "ResumeCount",
+									"PhoneScreens": "PhoneScreenCount",
+									"Interviews": "InterviewCount",
+									"PrevCandidateName": "PreviousCandidate",
+									"PrevCandidateEmployer": "PreviousCandidateEmployer",
+									"FName": "CandidateFirstname",
+									"MName": "CandidateMiddleName",
+									"LName": "CandidateLastName",
+									"CandidateSelected": "CandidateSelected",
+									"CandidateEmployer": "CandidateEmployer",
+									"CandidateSelectedSent": "CandidateSelectedSent",
+									"CandidateSource": "CandidateSource",
+									"CandidateStarted": "CandidateStarted",
+									"CandidateWithdrawal": "CandidateWithdrawal",
+									"CandidateWithdrawalSent": "CandidateWithdrawalSent",
+									"InternalSourcing": "InternalSource",
+									"LMJobCode": "LeidosJobCode",
+									"LMOpening": "LeidosOpening",
+									"LMPositionSubmit": "LeidosPositionSubmitted",
+									"LMRecord": "LeidosRecordStatus",
+									"LMRehire": "LeidosRehire",
+									"LMReq": "LeidosRequestNumber",
+									"LRATECreated": "LaborRateCreated",
+									"LRATE": "LaborRateStatus",
+									"LRATESubmitDate": "LaborRateSubmitDate",
+									"LRATEApprovedDate": "LaborRateApprovalDate",
+									"ActualStartDate": "ActualStartDate",
+									"ActualStartSent": "ActualStartSent",
+									"AuthorizedStart": "AuthorizedStart",
+									"AuthorizedStartSent": "AuthorizedStartSent",
+									"CancelDate": "OpeningCancelDate",
+									"CancelSent": "OpeningCancelSent",
+									"ID": "SOID",
+									"Modified": "LastUpdateDate",
+									"ModifiedBy": "LastUpdateBy",
+									"Created": "CreateDate",
+									"CreatedBy": "CreateBy"
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADL_StaffOpening",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ASQL_StaffOpening",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"variables": {
+					"ITSSC": {
+						"type": "String",
+						"defaultValue": "Yes"
+					},
+					"ITSSC2": {
+						"type": "String",
+						"defaultValue": "No"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ADL_Employer')]",
+				"[concat(variables('factoryId'), '/datasets/ASQL_Vendor')]",
+				"[concat(variables('factoryId'), '/datasets/ADL_StaffOpening')]",
+				"[concat(variables('factoryId'), '/datasets/ASQL_StaffOpening')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADL_Employer')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('dmstest_data_lake_store')]",
+					"type": "LinkedServiceReference"
+				},
+				"type": "AzureDataLakeStoreFile",
+				"structure": [
+					{
+						"name": "EMPLOYER_ID",
+						"type": "String"
+					},
+					{
+						"name": "EMPLOYER",
+						"type": "String"
+					},
+					{
+						"name": "STREET_PO_BOX",
+						"type": "String"
+					},
+					{
+						"name": "STREET_OTHER",
+						"type": "String"
+					},
+					{
+						"name": "CITY",
+						"type": "String"
+					},
+					{
+						"name": "STATE",
+						"type": "String"
+					},
+					{
+						"name": "ZIP",
+						"type": "String"
+					},
+					{
+						"name": "PHONE",
+						"type": "String"
+					},
+					{
+						"name": "FAX",
+						"type": "String"
+					},
+					{
+						"name": "MEMO",
+						"type": "String"
+					}
+				],
+				"typeProperties": {
+					"format": {
+						"type": "TextFormat",
+						"columnDelimiter": "|",
+						"rowDelimiter": "",
+						"nullValue": "\\N",
+						"treatEmptyAsNull": true,
+						"skipLineCount": 0,
+						"firstRowAsHeader": true
+					},
+					"fileName": "Employer_New.txt",
+					"folderPath": "Metrics/Staging"
+				}
+			}
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ASQL_Vendor')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('AzureSqlMetricTest')]",
+					"type": "LinkedServiceReference"
+				},
+				"type": "AzureSqlTable",
+				"structure": [
+					{
+						"name": "VendorName",
+						"type": "String"
+					},
+					{
+						"name": "Address1",
+						"type": "String"
+					},
+					{
+						"name": "Address2",
+						"type": "String"
+					},
+					{
+						"name": "City",
+						"type": "String"
+					},
+					{
+						"name": "StateAbbrev",
+						"type": "String"
+					},
+					{
+						"name": "ZipCode",
+						"type": "String"
+					},
+					{
+						"name": "PhoneNumber",
+						"type": "String"
+					},
+					{
+						"name": "FaxNumber",
+						"type": "String"
+					},
+					{
+						"name": "Note",
+						"type": "String"
+					},
+					{
+						"name": "EmployerID",
+						"type": "Int32"
+					}
+				],
+				"typeProperties": {
+					"tableName": "[[dbo].[Vendor]"
+				}
+			}
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADL_StaffOpening')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('dmstest_data_lake_store')]",
+					"type": "LinkedServiceReference"
+				},
+				"type": "AzureDataLakeStoreFile",
+				"structure": [
+					{
+						"name": "ID",
+						"type": "String"
+					},
+					{
+						"name": "OpeningStatus",
+						"type": "String"
+					},
+					{
+						"name": "SearchStatus",
+						"type": "String"
+					},
+					{
+						"name": "ResourceType",
+						"type": "String"
+					},
+					{
+						"name": "Task_Id",
+						"type": "String"
+					},
+					{
+						"name": "WO_Id",
+						"type": "String"
+					},
+					{
+						"name": "HiringManager",
+						"type": "String"
+					},
+					{
+						"name": "LCAT",
+						"type": "String"
+					},
+					{
+						"name": "CandidateName",
+						"type": "String"
+					},
+					{
+						"name": "Modified",
+						"type": "String"
+					},
+					{
+						"name": "ModifiedBy",
+						"type": "String"
+					},
+					{
+						"name": "Created",
+						"type": "String"
+					},
+					{
+						"name": "CreatedBy",
+						"type": "String"
+					},
+					{
+						"name": "ActualStartDate",
+						"type": "String"
+					},
+					{
+						"name": "ActualStartSent",
+						"type": "String"
+					},
+					{
+						"name": "AuthorizedStart",
+						"type": "String"
+					},
+					{
+						"name": "AuthorizedStartSent",
+						"type": "String"
+					},
+					{
+						"name": "CancelDate",
+						"type": "String"
+					},
+					{
+						"name": "CancelSent",
+						"type": "String"
+					},
+					{
+						"name": "FName",
+						"type": "String"
+					},
+					{
+						"name": "LName",
+						"type": "String"
+					},
+					{
+						"name": "MName",
+						"type": "String"
+					},
+					{
+						"name": "CandidateSelected",
+						"type": "String"
+					},
+					{
+						"name": "CandidateSelectedSent",
+						"type": "String"
+					},
+					{
+						"name": "CandidateSource",
+						"type": "String"
+					},
+					{
+						"name": "CandidateStarted",
+						"type": "String"
+					},
+					{
+						"name": "CandidateWithdrawal",
+						"type": "String"
+					},
+					{
+						"name": "CandidateWithdrawalSent",
+						"type": "String"
+					},
+					{
+						"name": "InternalSourcing",
+						"type": "String"
+					},
+					{
+						"name": "Interviews",
+						"type": "String"
+					},
+					{
+						"name": "PhoneScreens",
+						"type": "String"
+					},
+					{
+						"name": "LMJobCode",
+						"type": "String"
+					},
+					{
+						"name": "LMOpening",
+						"type": "String"
+					},
+					{
+						"name": "LMPositionSubmit",
+						"type": "String"
+					},
+					{
+						"name": "LMRecord",
+						"type": "String"
+					},
+					{
+						"name": "LMRehire",
+						"type": "String"
+					},
+					{
+						"name": "LMReq",
+						"type": "String"
+					},
+					{
+						"name": "LRATE",
+						"type": "String"
+					},
+					{
+						"name": "LRATEApprovedDate",
+						"type": "String"
+					},
+					{
+						"name": "LRATECreated",
+						"type": "String"
+					},
+					{
+						"name": "LRATESubmitDate",
+						"type": "String"
+					},
+					{
+						"name": "OnholdOpeningStatus",
+						"type": "String"
+					},
+					{
+						"name": "OpeningDate",
+						"type": "String"
+					},
+					{
+						"name": "OpeningName",
+						"type": "String"
+					},
+					{
+						"name": "OpeningType",
+						"type": "String"
+					},
+					{
+						"name": "PlannedEnd",
+						"type": "String"
+					},
+					{
+						"name": "PlannedHours",
+						"type": "String"
+					},
+					{
+						"name": "PlannedStart",
+						"type": "String"
+					},
+					{
+						"name": "PositionTitle",
+						"type": "String"
+					},
+					{
+						"name": "ProbableStartDate",
+						"type": "String"
+					},
+					{
+						"name": "HighPriorityReq",
+						"type": "String"
+					},
+					{
+						"name": "ResumesReceived",
+						"type": "String"
+					},
+					{
+						"name": "CandidateEmployer",
+						"type": "String"
+					},
+					{
+						"name": "PrevCandidateName",
+						"type": "String"
+					},
+					{
+						"name": "PrevCandidateEmployer",
+						"type": "String"
+					}
+				],
+				"typeProperties": {
+					"format": {
+						"type": "TextFormat",
+						"columnDelimiter": "|",
+						"rowDelimiter": "",
+						"nullValue": "\\N",
+						"treatEmptyAsNull": true,
+						"skipLineCount": 0,
+						"firstRowAsHeader": true
+					},
+					"fileName": "StaffOpenings_New.csv",
+					"folderPath": "Metrics/Staging"
+				}
+			}
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ASQL_StaffOpening')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "[parameters('AzureSqlMetricTest')]",
+					"type": "LinkedServiceReference"
+				},
+				"type": "AzureSqlTable",
+				"structure": [
+					{
+						"name": "WorkOrderRecordNumber",
+						"type": "Int32"
+					},
+					{
+						"name": "WorkOrderNumber",
+						"type": "String"
+					},
+					{
+						"name": "SearchStatus",
+						"type": "String"
+					},
+					{
+						"name": "HiringManager",
+						"type": "String"
+					},
+					{
+						"name": "HighPriorityRequest",
+						"type": "String"
+					},
+					{
+						"name": "OpeningDate",
+						"type": "DateTime"
+					},
+					{
+						"name": "OpeningName",
+						"type": "String"
+					},
+					{
+						"name": "OpeningType",
+						"type": "String"
+					},
+					{
+						"name": "OpeningLaborCategory",
+						"type": "String"
+					},
+					{
+						"name": "OpeningStatus",
+						"type": "String"
+					},
+					{
+						"name": "OpeningOnHold",
+						"type": "String"
+					},
+					{
+						"name": "PlannedStartDate",
+						"type": "DateTime"
+					},
+					{
+						"name": "PlannedEndDate",
+						"type": "DateTime"
+					},
+					{
+						"name": "PlannedHours",
+						"type": "Decimal"
+					},
+					{
+						"name": "PositionTitle",
+						"type": "String"
+					},
+					{
+						"name": "ResumeCount",
+						"type": "Int16"
+					},
+					{
+						"name": "PhoneScreenCount",
+						"type": "Int16"
+					},
+					{
+						"name": "InterviewCount",
+						"type": "Int16"
+					},
+					{
+						"name": "PreviousCandidate",
+						"type": "String"
+					},
+					{
+						"name": "PreviousCandidateEmployer",
+						"type": "String"
+					},
+					{
+						"name": "CandidateFirstname",
+						"type": "String"
+					},
+					{
+						"name": "CandidateMiddleName",
+						"type": "String"
+					},
+					{
+						"name": "CandidateLastName",
+						"type": "String"
+					},
+					{
+						"name": "CandidateSelected",
+						"type": "String"
+					},
+					{
+						"name": "CandidateEmployer",
+						"type": "String"
+					},
+					{
+						"name": "CandidateSelectedSent",
+						"type": "String"
+					},
+					{
+						"name": "CandidateSource",
+						"type": "String"
+					},
+					{
+						"name": "CandidateStarted",
+						"type": "String"
+					},
+					{
+						"name": "CandidateWithdrawal",
+						"type": "String"
+					},
+					{
+						"name": "CandidateWithdrawalSent",
+						"type": "String"
+					},
+					{
+						"name": "InternalSource",
+						"type": "String"
+					},
+					{
+						"name": "LeidosJobCode",
+						"type": "String"
+					},
+					{
+						"name": "LeidosOpening",
+						"type": "String"
+					},
+					{
+						"name": "LeidosPositionSubmitted",
+						"type": "String"
+					},
+					{
+						"name": "LeidosRecordStatus",
+						"type": "String"
+					},
+					{
+						"name": "LeidosRehire",
+						"type": "String"
+					},
+					{
+						"name": "LeidosRequestNumber",
+						"type": "String"
+					},
+					{
+						"name": "LaborRateCreated",
+						"type": "String"
+					},
+					{
+						"name": "LaborRateStatus",
+						"type": "String"
+					},
+					{
+						"name": "LaborRateSubmitDate",
+						"type": "DateTime"
+					},
+					{
+						"name": "LaborRateApprovalDate",
+						"type": "DateTime"
+					},
+					{
+						"name": "ActualStartDate",
+						"type": "DateTime"
+					},
+					{
+						"name": "ActualStartSent",
+						"type": "String"
+					},
+					{
+						"name": "AuthorizedStart",
+						"type": "String"
+					},
+					{
+						"name": "AuthorizedStartSent",
+						"type": "String"
+					},
+					{
+						"name": "OpeningCancelDate",
+						"type": "DateTime"
+					},
+					{
+						"name": "OpeningCancelSent",
+						"type": "String"
+					},
+					{
+						"name": "SOID",
+						"type": "Int32"
+					},
+					{
+						"name": "LastUpdateDate",
+						"type": "DateTime"
+					},
+					{
+						"name": "LastUpdateBy",
+						"type": "String"
+					},
+					{
+						"name": "CreateDate",
+						"type": "DateTime"
+					},
+					{
+						"name": "CreateBy",
+						"type": "String"
+					}
+				],
+				"typeProperties": {
+					"tableName": "[[dbo].[StaffOpening]"
+				}
+			}
+		}
+	]
+}
