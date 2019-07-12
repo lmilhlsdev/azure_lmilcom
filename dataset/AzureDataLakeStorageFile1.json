@@ -1,0 +1,15 @@
+{
+	"name": "AzureDataLakeStorageFile1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureBlobFSFile",
+		"typeProperties": {
+			"fileName": "@dataset().fileName",
+			"folderPath": "@dataset().folderPath"
+		}
+	}
+}
